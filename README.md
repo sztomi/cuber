@@ -1,5 +1,7 @@
 ## Cuber, a Python implementation of Rubik's cube
 
+![screenshot](http://i.imgur.com/UGRyloL.png)
+
 Cuber is a compact representation of the 3x3x3 Rubik's cube. The primary aim is to be able to
 generate scrambles with a certain amount of "bad" edges for practicing the EO-line solving for the
 ZZ method. However it is probably possible to use it for other purposes as well. 
@@ -8,11 +10,25 @@ ZZ method. However it is probably possible to use it for other purposes as well.
 
 Also, I'm a C++ programmer, so the code might not be very pythonic :)
 
+## Usage
+
+Python 2.7, might work with Py3k, I'm not sure.
+
+You need colorama for the colored output for displaying the cube. 
+
+    pip install colorama
+
+should work.
+
+Development happens on the dev branch, the master branch is stable. For example right now you will
+only see the readme and gitignore file on the master branch. Switch to the dev branch to see the
+source for now.
+
 ## Features
 
   * Generating scrambles
   * Displaying the cube state on the console
-  * Executing scrambles (not yet complete)
+  * Executing scrambles
 
 ## Implementation
 
