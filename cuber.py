@@ -18,22 +18,6 @@ class Side:
     U = 4
     D = 5
 
-class ArrayView(object):
-    def __init__(self, array, start_index, size):
-        self.array = array[start_index:start_index+size*size]
-        self.start_index = start_index
-        self.size = size
-
-    def make_2d(self):
-        result = []
-        for i in xrange(self.size):
-            result.append([])
-            for j in xrange(self.size):
-                index = self.start_index + i * self.size + j
-                print index, i, j, self.size, self.start_index
-                result[i].append(self.array[index])
-        return result
-
 class Face(object):
     def __init__(self, side, color, *attached):
         self.side = side
@@ -140,19 +124,27 @@ class Cube(object):
     def get_line(self, line):
         return [self.colors[i] for i in line]
 
+    def make_2d(self, side):
+        result = []
+        for i in xrange(self.size):
+            result.append([])
+            for j in xrange(self.size):
+                result[i].append(self.colors[self.coord(side, i, j)])
+        return result
+
     def turn(self, side):
         f = self.faces[side]
-
         #tmp = self.get_line(self.top_line(side))
         #self.assign_line(self.left_column(side), self.top_line(side))
         #self.assign_line(self.bottom_line(side), self.left_column(side))
         #self.assign_line(self.right_column(side), self.bottom_line(side))
         #self.assign_line_values(tmp, self.right_column(side))
-        face_array = ArrayView(self.colors, self.size * self.size * side, self.size).make_2d()
+        face_array = self.make_2d(side)
+
         rotated = zip(*face_array[::-1])
         for i in xrange(self.size):
             for j in xrange(self.size):
-                self.colors[self.size * self.size * side + i * self.size + j] = rotated[i * self.size + j]
+                self.colors[self.coord(side, i, j)] = rotated[i][j]
 
         tmp = self.get_line(f.attached[0])
         self.assign_line(f.attached[3], f.attached[0])
