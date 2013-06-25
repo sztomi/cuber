@@ -1,5 +1,6 @@
 import colorama
 import sys
+import random
 from colorama import Fore, Back, Style
 
 class Color:
@@ -10,7 +11,7 @@ class Color:
     WHITE = 4
     YELLOW = 5
 
-class Side:
+class Side(object):
     F = 0
     R = 1
     B = 2
@@ -147,6 +148,83 @@ class Cube(object):
         self.assign_line(f.attached[1], f.attached[2])
         self.assign_line_values(tmp, f.attached[1])
 
+    def is_bad_edge(self, side, line, sticker):
+        if side == Side.U or side == Side.D:
+            edge_ud = self.colors[self.coord(side, line, sticker)]
+            if (edge_ud == self.faces[Side.R].color or
+                edge_ud == self.faces[Side.L].color):
+                return True
+            else:
+                f = self.faces[side]
+                if side == Side.U or side == Side.D:
+                    if line == 0:
+                        edge_s = self.colors[f.attached[0][1]]
+                    elif line == 1:
+                        if sticker == 0:
+                            edge_s = self.colors[f.attached[3][1]]
+                        elif sticker == 2:
+                            edge_s = self.colors[f.attached[1][1]]
+                        else:
+                            raise Exception("Not an edge: side = {}, line = {}, sticker = {}"
+                                            .format(side, line, sticker))
+                    elif line == 2:
+                        edge_s = self.colors[f.attached[2][1]]
+                    else:
+                        raise Exception("Not an edge: side = {}, line = {}, sticker = {}"
+                                        .format(side, line, sticker))
+                    if (edge_s == self.faces[Side.U].color or
+                        edge_s == self.faces[Side.D].color):
+                        return True
+                    else:
+                        return False
+        elif side == Side.F or side == Side.B:
+            f = self.faces[side]
+            if line != 1:
+                raise Exception("Not an edge: side = {}, line = {}, sticker = {}"
+                                .format(side, line, sticker))
+
+            edge_fb = self.colors[self.coord(side, line, sticker)]
+            if (edge_fb == self.faces[Side.R].color or
+                edge_fb == self.faces[Side.L].color):
+                return True
+            else:
+                if sticker == 0:
+                    edge_s = self.colors[f.attached[3][1]]
+                elif sticker == 2:
+                    edge_s = self.colors[f.attached[1][1]]
+                else:
+                    raise Exception("Not an edge: side = {}, line = {}, sticker = {}"
+                                    .format(side, line, sticker))
+                if (edge_s == self.faces[Side.U].color or
+                    edge_s == self.faces[Side.D].color):
+                    return True
+                else:
+                    return False
+        else:
+            raise Exception("Invalid side to check (only F, B, U, D allowed)")
+
+    def bad_edge_count(self):
+        edges = [
+                    (Side.U, 0, 1),
+                    (Side.U, 1, 0),
+                    (Side.U, 1, 2),
+                    (Side.U, 2, 1),
+                    (Side.D, 0, 1),
+                    (Side.D, 1, 0),
+                    (Side.D, 1, 2),
+                    (Side.D, 2, 1),
+                    (Side.F, 1, 0),
+                    (Side.F, 1, 2),
+                    (Side.B, 1, 0),
+                    (Side.B, 1, 2),
+                ]
+        result = 0
+        for item in edges:
+            if self.is_bad_edge(*item):
+                result += 1
+
+        return result
+
     def turn_back(self, side):
         f = self.faces[side]
         face_array = self.make_2d(side)
@@ -224,3 +302,28 @@ class Cube(object):
 
         if display: self.display()
 
+def gen_scramble(length=25):
+    sides = ["F", "U", "R", "D", "L", "B"]
+    modifiers = ["", "'", "2"]
+    scramble = ""
+    for i in xrange(25):
+        scramble += random.choice(sides)
+        scramble += random.choice(modifiers)
+        scramble += " "
+    return scramble[:-1]
+
+def gen_known_scramble(bad_edge_count):
+    colorama.init()
+    c = Cube()
+    iteration = 1
+    while True:
+        s = gen_scramble()
+        c.execute(s)
+        if c.bad_edge_count() == bad_edge_count:
+            print Fore.WHITE + "[{}] ".format(iteration) + Fore.GREEN+ "{}".format(s)
+            colorama.deinit()
+            c.display()
+            return s
+        else:
+            print Fore.WHITE + "[{}] ".format(iteration) + Fore.RED + "{}".format(s)
+            iteration += 1
