@@ -41,7 +41,7 @@ class Cube(object):
                         self.bottom_line(Side.U),
                         self.left_column(Side.R),
                         self.top_line(Side.D, True),
-                        self.right_column(Side.L)
+                        self.right_column(Side.L, True)
                     ),
                 Side.R: Face(
                         Side.R, Color.RED,
@@ -53,8 +53,8 @@ class Cube(object):
                 Side.B: Face(
                         Side.B, Color.BLUE,
                         self.top_line(Side.U),
-                        self.left_column(Side.L),
-                        self.bottom_line(Side.D),
+                        self.left_column(Side.L, True),
+                        self.bottom_line(Side.D, True),
                         self.right_column(Side.R)
                     ),
                 Side.L: Face(
@@ -62,7 +62,7 @@ class Cube(object):
                         self.left_column(Side.U),
                         self.left_column(Side.F),
                         self.left_column(Side.D),
-                        self.right_column(Side.B)
+                        self.right_column(Side.B, True)
                     ),
                 Side.U: Face(
                         Side.U, Color.WHITE,
@@ -134,11 +134,6 @@ class Cube(object):
 
     def turn(self, side):
         f = self.faces[side]
-        #tmp = self.get_line(self.top_line(side))
-        #self.assign_line(self.left_column(side), self.top_line(side))
-        #self.assign_line(self.bottom_line(side), self.left_column(side))
-        #self.assign_line(self.right_column(side), self.bottom_line(side))
-        #self.assign_line_values(tmp, self.right_column(side))
         face_array = self.make_2d(side)
 
         rotated = zip(*face_array[::-1])
@@ -154,12 +149,12 @@ class Cube(object):
 
     def turn_back(self, side):
         f = self.faces[side]
+        face_array = self.make_2d(side)
 
-        tmp = self.get_line(self.top_line(side))
-        self.assign_line(self.right_column(side), self.top_line(side))
-        self.assign_line(self.bottom_line(side), self.right_column(side))
-        self.assign_line(self.left_column(side), self.bottom_line(side))
-        self.assign_line_values(tmp, self.left_column(side))
+        rotated = zip(*face_array)[::-1]
+        for i in xrange(self.size):
+            for j in xrange(self.size):
+                self.colors[self.coord(side, i, j)] = rotated[i][j]
 
         tmp = self.get_line(f.attached[0])
         self.assign_line(f.attached[1], f.attached[0])
@@ -188,6 +183,7 @@ class Cube(object):
 
         indices = self.top_line(Side.U) + self.middle_line(Side.U) + self.bottom_line(Side.U)
         print "      {}{}{}\n      {}{}{}\n      {}{}{}".format(*[self.cchar(self.colors[c]) for c in indices])
+
         indices = self.top_line(Side.L) + self.top_line(Side.F) + self.top_line(Side.R) + self.top_line(Side.B)
         for c in indices:
             sys.stdout.write(self.cchar(self.colors[c]))
@@ -208,7 +204,8 @@ class Cube(object):
 
         colorama.deinit()
 
-    def execute(self, scramble):
+    def execute(self, scramble, reset=False, display=False):
+        if reset: self.__init__()
         items = scramble.split(' ')
         for step in items:
             if len(step) == 1:
@@ -224,4 +221,6 @@ class Cube(object):
                     raise Exception("Invalid scramble!")
             else:
                 raise Exception("Invalid scramble!")
+
+        if display: self.display()
 
