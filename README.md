@@ -1,12 +1,10 @@
-## Cuber, a Python implementation of Rubik's cube
+## Cuber, a Python implementation of the Rubik's cube
 
-![screenshot](http://i.imgur.com/UGRyloL.png)
+![screenshot](http://i.imgur.com/vvUl1Vz.png)
 
 Cuber is a compact representation of the 3x3x3 Rubik's cube. The primary aim is to be able to
 generate scrambles with a certain amount of "bad" edges for practicing the EO-line solving for the
 ZZ method. However it is probably possible to use it for other purposes as well. 
-
-**Currently the functionality is bugged, I'm still figuring it out.** 
 
 Also, I'm a C++ programmer, so the code might not be very pythonic :)
 
