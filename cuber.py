@@ -302,12 +302,19 @@ class Cube(object):
 
         if display: self.display()
 
+    def reset(self):
+        self.__init__()
+
 def gen_scramble(length=25):
     sides = ["F", "U", "R", "D", "L", "B"]
     modifiers = ["", "'", "2"]
     scramble = ""
+    last = ''
     for i in xrange(25):
-        scramble += random.choice(sides)
+        current = random.choice(sides)
+        while current == last: current = random.choice(sides)
+        last = current
+        scramble += current
         scramble += random.choice(modifiers)
         scramble += " "
     return scramble[:-1]
@@ -326,4 +333,5 @@ def gen_known_scramble(bad_edge_count):
             return s
         else:
             print Fore.WHITE + "[{}] ".format(iteration) + Fore.RED + "{}".format(s)
+            c.reset()
             iteration += 1
