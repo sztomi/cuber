@@ -320,18 +320,13 @@ def gen_scramble(length=25):
     return scramble[:-1]
 
 def gen_known_scramble(bad_edge_count):
-    colorama.init()
     c = Cube()
     iteration = 1
     while True:
         s = gen_scramble()
         c.execute(s)
         if c.bad_edge_count() == bad_edge_count:
-            print Fore.WHITE + "[{}] ".format(iteration) + Fore.GREEN+ "{}".format(s)
-            colorama.deinit()
-            c.display()
             return s
         else:
-            print Fore.WHITE + "[{}] ".format(iteration) + Fore.RED + "{}".format(s)
             c.reset()
             iteration += 1
