@@ -10,7 +10,8 @@ Also, I'm a C++ programmer, so the code might not be very pythonic :)
 
 ## Usage
 
-Python 2.7, might work with Py3k, I'm not sure.
+Python 2.7, might work with Py3k, I'm not sure (might need to change the print statements here and
+there)
 
 You need colorama for the colored output for displaying the cube. 
 
@@ -18,15 +19,14 @@ You need colorama for the colored output for displaying the cube.
 
 should work.
 
-Development happens on the dev branch, the master branch is stable. For example right now you will
-only see the readme and gitignore file on the master branch. Switch to the dev branch to see the
-source for now.
+Development happens on the dev branch, the master branch is (supposedly) stable. 
 
 ## Features
 
   * Generating scrambles
   * Displaying the cube state on the console
   * Executing scrambles
+  * Generating scrambles with a known number of bad edges
 
 ## Implementation
 
@@ -34,4 +34,5 @@ The stickers are stored in a one-dimensional list. The structure of the cube is 
 the faces (the face determines the starting index for the stickers) and the faces have "attached
 lines" on them which are used to track which stickers have to be moved around when turning a face.
 The attached lines are simple 3-tuples of indices. When a face is turned, the stickers associated
-with these indices are rotated around in the right direction.
+with these indices are rotated around in the right direction. The stickers on the face are 
+transformed into a 2D matrix, rotated, and then written back to the original array.
